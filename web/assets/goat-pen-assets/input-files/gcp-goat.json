@@ -1,0 +1,65 @@
+[
+    {
+        "type": "dropdown",
+        "label": "Action to perform",
+        "options": ["Deploy", "Destroy"],
+        "key": "_TERRAFORM_ACTION",
+        "required": true
+    },
+    {
+        "type": "linked_dropdown",
+        "label": "Select Deployment Account",
+        "options": ["Current Logged In Account", "Service Account"],
+        "linked_input": {
+            "Service Account": [{
+                "type": "password",
+                "label": "Enter Service Account Email",
+                "key": "service_account_email",
+                "required": true
+            },
+            {
+                "type": "input",
+                "label": "Enter Project ID",
+                "key": "service_account_password",
+                "required": true
+            }]
+        },
+        "key": "deployment_account",
+        "required": true
+    },
+    {
+        "type": "linked_dropdown",
+        "label": "Select GCPGoat Project's Account Details",
+        "options": [
+            "Current Logged In Account",
+            "Service Account"
+        ],
+        "linked_input": {
+            "Current Logged In Account": [
+                
+            ],
+            "Service Account": [
+                {
+                    "type": "password",
+                    "label": "Enter Service Account Key",
+                    "key": "_GCP_SERVICE_ACCOUNT_KEY",
+                    "required": true
+                }
+            ]
+        },
+        "key": "project_account",
+        "required": true
+    },
+    {
+        "type": "input",
+        "label": "Enter Project ID",
+        "key": "_GCP_PROJECT_ID",
+        "required": true
+    },
+    {
+        "type": "input",
+        "label": "Enter GCP Billing Account Name",
+        "key": "_GCP_PROJECT_BILLING_ACCOUNT_NAME",
+        "required": true
+    }
+]

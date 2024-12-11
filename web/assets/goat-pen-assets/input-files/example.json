@@ -1,0 +1,97 @@
+[
+    {
+        "type": "input",
+        "label": "Enter your name",
+        "key": "user_name",
+        "required": true
+    },
+    {
+        "type": "password",
+        "label": "Enter your password",
+        "key": "user_password",
+        "required": true
+    },
+    {
+        "type": "dropdown",
+        "label": "Select your Region",
+        "options": [
+            "us",
+            "europe"
+        ],
+        "key": "user_place",
+        "required": true
+    },
+    {
+        "type": "linked_dropdown",
+        "label": "Select your Favorite Thing",
+        "options": [
+            "Flowers",
+            "Icecream",
+            "Chocolates"
+        ],
+        "key": "user_fav",
+        "linked_input": {
+            "Flowers": [
+                {
+                    "type": "input",
+                    "label": "Which Flower do you like",
+                    "key": "user_fav_flower",
+                    "required": true
+                }
+            ],
+            "Icecream": [
+                {
+                    "type": "input",
+                    "label": "Have there some for me too?",
+                    "key": "user_fav_icecream",
+                    "required": true
+                }
+            ],
+            "Chocolates": [
+                {
+                    "type": "linked_dropdown",
+                    "label": "Which Chocolate you want",
+                    "key": "user_fav_chocolate",
+                    "required": true,
+                    "options": [
+                        "Dairy Milk Silk",
+                        "Kitkat",
+                        "Lindor"
+                    ],
+                    "linked_input": {
+                        "Dairy Milk Silk": [
+                            {
+                                "type": "dropdown",
+                                "label": "Which Dairy Milk Silk you want",
+                                "key": "user_fav_dairy_milk_silk",
+                                "required": true,
+                                "options": [
+                                    "Fruit & Nut",
+                                    "Roasted Almond",
+                                    "Plain"
+                                ]
+                            }
+                        ],
+                        "Kitkat": [
+                            {
+                                "type": "input",
+                                "label": "How many Kitkat you want",
+                                "key": "user_fav_kitkat",
+                                "required": true
+                            }
+                        ],
+                        "Lindor": [
+                            {
+                                "type": "input",
+                                "label": "How many Lindor you want",
+                                "key": "user_fav_lindor",
+                                "required": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "required": true
+    }
+]

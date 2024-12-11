@@ -1,0 +1,482 @@
+steps:
+  # Step 1: Create a test bucket
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'update-gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # if google auth token is non empty then auth with the token
+        gcloud auth list
+        if [ -n "$_GOOGLE_AUTHED_TOKEN" ]; then
+          export CLOUDSDK_AUTH_ACCESS_TOKEN=$(echo "$_GOOGLE_AUTHED_TOKEN" | base64 --decode)
+          echo "Authenticating with the provided token"
+          echo "$_GOOGLE_AUTHED_TOKEN" | base64 --decode > /workspace/token.txt
+          gcloud config set auth/access_token_file /workspace/token.txt
+          gcloud info
+        fi
+  
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'create-test-bucket'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Creating a test bucket: $_TEST_BUCKET_NAME"
+        
+        gcloud info
+        if gsutil ls | grep -q "gs://$_TEST_BUCKET_NAME"; then
+          echo "Bucket already exists. Exiting."
+        elif ! gsutil mb "gs://$_TEST_BUCKET_NAME"; then
+          echo "Failed to create bucket. Exiting."
+          echo -e "Doesn't have required permissions\n\n"
+          exit 1
+        fi
+
+  # Step 2: Upload a test object to the bucket
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'upload-test-object'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Hello, World!" > $_TEST_OBJECT
+        echo "Uploading a test object to the bucket: gs://$_TEST_BUCKET_NAME/"
+        if ! gsutil cp "$_TEST_OBJECT" "gs://$_TEST_BUCKET_NAME/"; then
+          echo "Failed to upload object. Exiting."
+          echo -e "Doesn't have required permissions\n\n"
+          exit 1
+        fi
+
+  # Step 3: Download the object
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'download-object'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Downloading the object: gs://$_TEST_BUCKET_NAME/$_TEST_OBJECT"
+        if ! gsutil cp "gs://$_TEST_BUCKET_NAME/$_TEST_OBJECT" "downloaded_$_TEST_OBJECT"; then
+          echo "Failed to download object. Exiting."
+          echo -e "Doesn't have required permissions\n\n"
+          exit 1
+        fi
+
+  # Step 4: Delete the object
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'delete-object'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Deleting the object: gs://$_TEST_BUCKET_NAME/$_TEST_OBJECT"
+        if ! gsutil rm "gs://$_TEST_BUCKET_NAME/$_TEST_OBJECT"; then
+          echo "Failed to delete object. Exiting."
+          echo -e "Doesn't have required permissions\n\n"
+          exit 1
+        fi
+
+  # Step 5: Delete the test bucket
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'delete-test-bucket'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        export CLOUDSDK_AUTH_ACCESS_TOKEN=$(echo "$_GOOGLE_AUTHED_TOKEN" | base64 --decode)
+
+        gcloud config set pass_credentials_to_gsutil true
+        pwd
+        gcloud functions list
+        gcloud info
+        echo "Deleting the test bucket: gs://$_TEST_BUCKET_NAME"
+        if ! gcloud storage buckets delete "gs://$_TEST_BUCKET_NAME"; then
+          echo "Failed to delete bucket. Exiting."
+          echo -e "Doesn't have required permissions\n\n"
+          exit 1
+        fi
+
+
+  # Step 6: Check if Deployment is coming then there should be no file in the bucket
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'check-deployment-requirements'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Checking if the bucket is empty"
+        if [[ "$_MODULE_TYPE" == "AWSGoat" ]]; then
+          echo "AWSGoat"
+          echo "Checking if the bucket is empty"
+          
+          if [[ "$_TERRAFORM_ACTION" == "Deploy" ]] && gsutil ls "gs://$_BUCKET_NAME/$_MODULE_TYPE/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')/terraform.tfstate"; then
+            echo "Already a deployment exists."
+            echo "Please destroy the existing deployment before deploying again."
+            echo "Exiting..."
+            exit 1
+          fi
+        elif [[ "$_TERRAFORM_ACTION" == "Deploy" ]] && gsutil ls "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate"; then
+          echo "Already a deployment exists."
+          echo "Please destroy the existing deployment before deploying again."
+          echo "Exiting..."
+          exit 1
+        fi
+
+  # Step 7: Check if Destroy is coming then there should be a file in the bucket
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'check-destroy-requirements'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Checking if the bucket is empty"
+        if [[ "$_MODULE_TYPE" == "AWSGoat" ]]; then
+          echo "AWSGoat"
+          echo "Checking if the bucket is empty"
+          if [[ "$_TERRAFORM_ACTION" == "Destroy" ]] && ! gsutil ls "gs://$_BUCKET_NAME/$_MODULE_TYPE/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')/terraform.tfstate"; then
+            echo "No deployment exists."
+            echo "Please deploy the module before destroying."
+            echo "Exiting..."
+            exit 1
+          fi
+        elif [[ "$_TERRAFORM_ACTION" == "Destroy" ]] && ! gsutil ls "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate"; then
+          echo "No deployment exists."
+          echo "Please deploy the module before destroying."
+          echo "Exiting..."
+          exit 1
+        fi
+  
+
+  # Step 8: Get 
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Get Goat Code'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        apt-get update && apt-get install -y wget curl unzip python3 zip
+
+        echo "Check Module URL"
+        if [ -z "$_MODULE_URL" ]; then
+          echo "Module URL not provided. Exiting..."
+          exit 1
+        else
+          echo "Module URL provided: ${_MODULE_URL}"
+        fi
+
+        echo "Download Module"
+        echo "i'm here before wget"
+        curl --version
+        curl "$_MODULE_URL" -o module.zip
+
+        if [ $? -ne 0 ]; then
+          echo "Failed to download the module. Exiting..."
+          exit 1
+        fi
+        echo "i'm here after wget"
+
+        echo "Unzipping module"
+        unzip module.zip -d module
+        if [ $? -ne 0 ]; then
+          echo "Failed to unzip the module. Exiting..."
+          exit 1
+        fi
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Action on AWSGoat'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        if [ "$_MODULE_TYPE" == "AWSGoat" ]; then
+
+          # get the terraform program
+          apt-get update && apt-get install -y wget curl unzip python3 zip
+          curl "https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip" -o terraform.zip
+          unzip terraform.zip -d /usr/local/bin/
+          rm terraform.zip
+
+          # install aws cli and pip3  
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          ./aws/install
+          pip3 install boto3
+          apt install -y python3-boto3
+
+          # go to the module directory
+          echo "Move to module directory"
+
+          echo $_TERRAFORM_DIRECTORY/modules/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+          echo $_MODULE_TYPE
+          cd module/$_TERRAFORM_DIRECTORY/modules/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+
+          echo "check creds"
+          echo "Deploying $_MODULE_TYPE module"
+
+          echo "Exporting AWS Credentials"
+          export AWS_ACCESS_KEY_ID="$_AWS_ACCESS_KEY_ID"
+          export AWS_SECRET_ACCESS_KEY="$_AWS_SECRET_ACCESS_KEY"
+          export AWS_DEFAULT_REGION="$_AWS_DEFAULT_REGION"
+          echo "default region ${_AWS_DEFAULT_REGION}"
+          echo "AWSGoat"
+          
+          # check if the action is destroy then get the terraform state file from the bucket
+          if [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Destroying Terraform"
+            gsutil cp "gs://$_BUCKET_NAME/$_MODULE_TYPE/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')/terraform.tfstate" .
+          fi 
+
+          terraform init
+          echo "false" > /workspace/delete_bucket.txt
+          if [ "$_TERRAFORM_ACTION" == "Deploy" ]; then
+            echo "Applying Terraform "
+            terraform apply --auto-approve
+          elif [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Destroying Terraform"
+            terraform destroy --auto-approve
+            if [ $? -eq 0 ]; then
+              echo "true" > /workspace/delete_bucket.txt
+            fi
+          else
+            echo "Invalid Terraform Action. Exiting..."
+            exit 1
+          fi
+
+
+          if [ "$_TERRAFORM_ACTION" == "Deploy" ] || [ "$(cat /workspace/delete_bucket.txt)" == "false" ]; then
+            echo "Uploading state to GCS"
+            if ! gsutil ls | grep -q "gs://$_BUCKET_NAME"; then
+              echo "Creating bucket: $_BUCKET_NAME"
+              gsutil mb "gs://$_BUCKET_NAME"
+            fi
+            gsutil cp terraform.tfstate "gs://$_BUCKET_NAME/$_MODULE_TYPE/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')/terraform.tfstate"
+          elif [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Deleting state from GCS"
+            gsutil rm "gs://$_BUCKET_NAME/$_MODULE_TYPE/$(echo "$_AWS_MODULE_TYPE" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')/terraform.tfstate"
+          fi
+
+          echo "Terraform $_TERRAFORM_ACTION Complete"
+        fi
+
+  
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Action on AzureGoat'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        if [ "$_MODULE_TYPE" == "AzureGoat" ]; then
+
+          # get the terraform program
+          apt-get update && apt-get install -y wget curl unzip python3 zip
+          curl "https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip" -o terraform.zip
+          unzip terraform.zip -d /usr/local/bin/
+          rm terraform.zip
+
+          # install azure cli
+          curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+          # go to the module directory
+          echo "Move to module directory"
+          echo $_TERRAFORM_DIRECTORY
+          echo $_MODULE_TYPE
+          cd module/$_TERRAFORM_DIRECTORY
+
+          echo "check creds"
+          echo "Deploying $_MODULE_TYPE module"
+
+          echo "AzureGoat"
+          echo "Exporting Azure Credentials"
+          az login --service-principal -u $_AZURE_CLIENT_ID -p $_AZURE_CLIENT_SECRET --tenant $_AZURE_TENANT_ID
+          az account set --subscription $_AZURE_SUBSCRIPTION_ID
+
+          export ARM_CLIENT_ID="$_AZURE_CLIENT_ID"
+          export ARM_CLIENT_SECRET="$_AZURE_CLIENT_SECRET"
+          export ARM_TENANT_ID="$_AZURE_TENANT_ID"
+          export ARM_SUBSCRIPTION_ID="$_AZURE_SUBSCRIPTION_ID"
+
+          # check if the action is destroy then get the terraform state file from the bucket
+          if [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Destroying Terraform"
+            gsutil cp "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate" .
+          fi
+
+          terraform init
+
+          echo "false" > /workspace/delete_bucket.txt
+          if [ "$_TERRAFORM_ACTION" == "Deploy" ]; then
+            echo "Applying Terraform"
+          elif [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Destroying Terraform"
+            if [ $? -eq 0 ]; then
+              echo "true" > /workspace/delete_bucket.txt
+            fi
+          else
+            echo "Invalid Terraform Action. Exiting..."
+            exit 1
+          fi
+
+
+          if [ "$_TERRAFORM_ACTION" == "Deploy" ] || [ "$(cat /workspace/delete_bucket.txt)" == "false" ]; then
+            echo "Uploading state to GCS"
+            if ! gsutil ls | grep -q "gs://$_BUCKET_NAME"; then
+              echo "Creating bucket: $_BUCKET_NAME"
+              gsutil mb "gs://$_BUCKET_NAME"
+            fi
+            gsutil cp terraform.tfstate "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate"
+          elif [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Deleting state from GCS"
+            gsutil rm "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate"
+          fi
+
+          echo "Terraform $_TERRAFORM_ACTION Complete"
+        fi
+
+  
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Action on GCPGoat'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+        if [ "$_MODULE_TYPE" == "GCPGoat" ]; then
+
+          # get the terraform program
+          apt-get update && apt-get install -y wget curl unzip python3 zip
+          curl "https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip" -o terraform.zip
+          unzip terraform.zip -d /usr/local/bin/
+          rm terraform.zip
+
+          # Get parent account details
+          gcloud config get-value account > /workspace/account.txt
+
+
+          # go to the module directory
+          echo "Move to module directory"
+          echo $_TERRAFORM_DIRECTORY
+          echo $_MODULE_TYPE
+          cd module/$_TERRAFORM_DIRECTORY
+
+          # check if the action is destroy then get the terraform state file from the bucket
+          if [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Destroying Terraform"
+            gsutil cp "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate" .
+          fi
+
+          echo "check creds"
+          echo "Deploying $_MODULE_TYPE module"
+
+          echo "GCPGoat"
+
+          echo "$_GCP_SERVICE_ACCOUNT_KEY" | base64 --decode > /workspace/sa-key.json
+          echo "$_GCP_PROJECT_BILLING_ACCOUNT_NAME"
+          echo "$_GCP_PROJECT_ID"
+          echo "$_GCP_REGION"
+          export GOOGLE_APPLICATION_CREDENTIALS=/workspace/sa-key.json
+
+          # before that save the main credentials
+          gcloud auth activate-service-account --key-file=/workspace/sa-key.json
+
+          gcloud services enable appengine.googleapis.com iam.googleapis.com cloudresourcemanager.googleapis.com cloudbilling.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com --project=$_GCP_PROJECT_ID 
+
+          new_lines='resource "random_id" "bucket_prefix" {
+          byte_length = 8
+        }
+
+        data "google_billing_account" "acct" {
+          display_name = "$_GCP_PROJECT_BILLING_ACCOUNT_NAME"
+        }
+
+        data "google_project" "my_project" {
+          project_id      = "$_GCP_PROJECT_ID"
+        }'
+
+          echo "listing"
+
+          # File path
+          file="main.tf"
+
+          # Temp file for intermediate operations
+          tmp_file=$(mktemp)
+
+          # Extract lines 14 onwards from the original file and save them to a temp file
+          tail -n +14 "$file" > "$tmp_file"
+
+          # Add new lines at the beginning of the temp file
+          echo "$new_lines" | cat - "$tmp_file" > "$file"
+
+          # Clean up the temp file
+          rm "$tmp_file"
+
+          sed -i 's/google_project\.my_project/data.google_project.my_project/g' "$file"
+          
+          cat main.tf | grep google_project.my_project
+          
+          # also remove  "serviceusage.googleapis.com" from the file
+          sed -i '/serviceusage.googleapis.com/d' main.tf
+
+          head -n 15 main.tf
+
+          gcloud info
+
+          
+
+          terraform init
+
+          echo "false" > /workspace/delete_bucket.txt
+          if [ "$_TERRAFORM_ACTION" == "Deploy" ]; then
+            echo "Applying Terraform "
+            terraform apply --auto-approve
+          elif [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Destroying Terraform"
+            terraform destroy --auto-approve
+            if [ $? -eq 0 ]; then
+              echo "true" > /workspace/delete_bucket.txt
+            fi
+          else
+            echo "Invalid Terraform Action. Exiting..."
+            exit 1
+          fi
+
+
+          echo The OG Account is $(cat /workspace/account.txt)
+          gcloud config set account $(cat /workspace/account.txt)
+
+          if [ "$_TERRAFORM_ACTION" == "Deploy" ] || [ "$(cat /workspace/delete_bucket.txt)" == "false" ]; then
+            echo "Uploading state to GCS"
+            if ! gsutil ls | grep -q "gs://$_BUCKET_NAME"; then
+              echo "Creating bucket: $_BUCKET_NAME"
+              gsutil mb "gs://$_BUCKET_NAME"
+            fi
+            gsutil cp terraform.tfstate "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate"
+          elif [ "$_TERRAFORM_ACTION" == "Destroy" ]; then
+            echo "Deleting state from GCS"
+            gsutil rm "gs://$_BUCKET_NAME/$_MODULE_TYPE/terraform.tfstate"
+          fi
+
+          echo "Terraform $_TERRAFORM_ACTION Complete"
+        fi
+
+
+substitutions:
+  _MODULE_URL: ''
+  _TERRAFORM_DIRECTORY: ''
+  _MODULE_TYPE: '' 
+  _AWS_ACCESS_KEY_ID: ''
+  _AWS_SECRET_ACCESS_KEY: ''
+  _AWS_MODULE_TYPE: ''
+  _AWS_DEFAULT_REGION: ''
+  _AZURE_CLIENT_ID: ''
+  _AZURE_CLIENT_SECRET: ''
+  _AZURE_TENANT_ID: ''
+  _AZURE_SUBSCRIPTION_ID: ''
+  _GCP_PROJECT_ID: ''
+  _GCP_SERVICE_ACCOUNT_KEY: ''
+  _GCP_PROJECT_BILLING_ACCOUNT_NAME: ''
+  _GCP_REGION: ''
+  _BUCKET_NAME: do-not-delete-terraform-state-$(gcloud config get-value project)
+  _TEST_BUCKET_NAME: test-bucket-gcp-pen-$(gcloud config get-value project)
+  _TEST_OBJECT: "test-object.txt"
+  _TERRAFORM_ACTION: ''
+  _GOOGLE_AUTHED_TOKEN: ''

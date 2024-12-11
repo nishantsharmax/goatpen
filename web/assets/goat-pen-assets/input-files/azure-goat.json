@@ -1,0 +1,54 @@
+[
+    {
+        "type": "dropdown",
+        "label": "Action to perform",
+        "options": ["Deploy", "Destroy"],
+        "key": "_TERRAFORM_ACTION",
+        "required": true
+    },
+    {
+        "type": "linked_dropdown",
+        "label": "Select Deployment Account",
+        "options": ["Current Logged In Account", "Service Account"],
+        "linked_input": {
+            "Service Account": [{
+                "type": "password",
+                "label": "Enter Service Account Email",
+                "key": "service_account_email",
+                "required": true
+            },
+            {
+                "type": "input",
+                "label": "Enter Project ID",
+                "key": "service_account_password",
+                "required": true
+            }]
+        },
+        "key": "deployment_account",
+        "required": true
+    },
+    {
+        "type": "password",
+        "label": "Enter your Azure Client ID",
+        "key": "_AZURE_CLIENT_ID",
+        "required": true
+    },
+    {
+        "type": "password",
+        "label": "Enter your Azure Client Secret",
+        "key": "_AZURE_CLIENT_SECRET",
+        "required": true
+    },
+    {
+        "type": "password",
+        "label": "Enter your Azure Tenant ID",
+        "key": "_AZURE_TENANT_ID",
+        "required": true
+    },
+    {
+        "type": "password",
+        "label": "Enter your Azure Subscription ID",
+        "key": "_AZURE_SUBSCRIPTION_ID",
+        "required": true
+    }
+]

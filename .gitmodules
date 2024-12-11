@@ -1,0 +1,15 @@
+[submodule "modules/AWSGoat"]
+	path = modules/AWSGoat
+	url = https://github.com/ine-labs/AWSGoat.git
+[submodule "modules/AzureGoat"]
+	path = modules/AzureGoat
+	url = https://github.com/ine-labs/AzureGoat.git
+[submodule "modules/GCPGoat"]
+	path = modules/GCPGoat
+	url = https://github.com/ine-labs/GCPGoat.git
+[submodule "modules/GearGoat"]
+	path = modules/GearGoat
+	url = https://github.com/ine-labs/GearGoat.git
+[submodule "modules/ICSGoat"]
+	path = modules/ICSGoat
+	url = https://github.com/ine-labs/ICSGoat.git

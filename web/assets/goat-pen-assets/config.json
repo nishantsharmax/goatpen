@@ -1,0 +1,56 @@
+[
+    {
+        "id": "aws-goat",
+        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "card-title": "AWSGoat",
+        "title": "AWSGoat : A Damn Vulnerable AWS Infrastructure",
+        "image": "/goat-images/awsGoat.png",
+        "md-file": "assets/goat-pen-assets/md-files/aws-goat.md",
+        "input-file": "assets/goat-pen-assets/input-files/aws-goat.json",
+        "use-repo": "AWSGoat",
+        "config-file": "assets/goat-pen-assets/build-files/aws-goat-files/cloudbuild.yaml",
+        "target-endpoint":["app_url", "ad_Target_URL"]
+    },
+    {
+        "id": "azure-goat",
+        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "card-title": "AzureGoat",
+        "title": "AzureGoat : A Damn Vulnerable Azure Infrastructure",
+        "image": "/goat-images/azureGoat.png",
+        "md-file": "assets/goat-pen-assets/md-files/azure-goat.md",
+        "input-file": "assets/goat-pen-assets/input-files/azure-goat.json",
+        "use-repo": "AzureGoat",
+        "config-file": "assets/goat-pen-assets/build-files/azure-goat-files/cloudbuild.yaml",
+        "target-endpoint": ["Target_URL"]
+    },
+    {
+        "id": "gcp-goat",
+        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "card-title": "GCPGoat",
+        "title": "GCPGoat : A Damn Vulnerable GCP Infrastructure",
+        "image": "/goat-images/gcpGoat.png",
+        "md-file": "assets/goat-pen-assets/md-files/gcp-goat.md",
+        "input-file": "assets/goat-pen-assets/input-files/gcp-goat.json",
+        "use-repo": "GCPGoat",
+        "config-file": "assets/goat-pen-assets/build-files/gcp-goat-files/cloudbuild.yaml",
+        "target-endpoint":["ad_Target_URL"]
+    },
+    {
+        "id": "gear-goat",
+        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "card-title": "GearGoat",
+        "title": "GearGoat : Car Vulnerabilities Simulator",
+        "image": "/goat-images/gearGoat.png",
+        "md-file": "assets/goat-pen-assets/md-files/gear-goat.md",
+        "input-file": "assets/goat-pen-assets/input-files/gear-goat.json"
+    },
+    {
+        "id": "ics-goat",
+        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "card-title": "ICSGoat",
+        "title": "ICSGoat : A Damn Vulnerable ICS Infrastructure",
+        "image": "/goat-images/icsGoat.png",
+        "md-file": "assets/goat-pen-assets/md-files/ics-goat.md",
+        "input-file": "assets/goat-pen-assets/input-files/ics-goat.json"
+    }
+]

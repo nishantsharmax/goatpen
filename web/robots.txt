@@ -1,0 +1,4 @@
+Sitemap: https://my.ine.com/sitemap.xml
+
+User-agent: *
+Disallow: /api
