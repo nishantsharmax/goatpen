@@ -1,7 +1,7 @@
 [
     {
         "id": "aws-goat",
-        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "description": "AWSGoat is a vulnerable by design infrastructure on AWS featuring the latest released OWASP Top 10 web application security risks (2021) and other misconfiguration based on services such as IAM, S3, API Gateway, Lambda, EC2, and ECS. AWSGoat mimics real-world infrastructure but with added vulnerabilities. It features multiple escalation paths and is focused on a black-box approach.",
         "card-title": "AWSGoat",
         "title": "AWSGoat : A Damn Vulnerable AWS Infrastructure",
         "image": "/goat-images/awsGoat.png",
@@ -13,7 +13,7 @@
     },
     {
         "id": "azure-goat",
-        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "description": "AzureGoat is a vulnerable by design infrastructure on Azure featuring the latest released OWASP Top 10 web application security risks (2021) and other misconfiguration based on services such as App Functions, CosmosDB, Storage Accounts, Automation and Identities. AzureGoat mimics real-world infrastructure but with added vulnerabilities. It features multiple escalation paths and is focused on a black-box approach.",
         "card-title": "AzureGoat",
         "title": "AzureGoat : A Damn Vulnerable Azure Infrastructure",
         "image": "/goat-images/azureGoat.png",
@@ -25,7 +25,7 @@
     },
     {
         "id": "gcp-goat",
-        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "description": "GCPGoat is a vulnerable by design infrastructure on GCP featuring the latest released OWASP Top 10 web application security risks (2021) and other misconfiguration based on services such as IAM, Storage Bucket, Cloud Functions and Compute Engine. GCPGoat mimics real-world infrastructure but with added vulnerabilities. It features multiple escalation paths and is focused on a black-box approach.",
         "card-title": "GCPGoat",
         "title": "GCPGoat : A Damn Vulnerable GCP Infrastructure",
         "image": "/goat-images/gcpGoat.png",
@@ -37,7 +37,7 @@
     },
     {
         "id": "gear-goat",
-        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "description": "Gear Goat is a lightweight simulation tool inspired by ICSim. Gear Goat mimics CAN bus communication and supports running on a single interface, \"vcan0,\" with predefined arbitration IDs. It includes actions such as turn indicators, door lock/unlock indicators, and speedometer updates. Gear Goat is designed to help users understand and analyze CAN bus functionalities and their potential vulnerabilities.",
         "card-title": "GearGoat",
         "title": "GearGoat : Car Vulnerabilities Simulator",
         "image": "/goat-images/gearGoat.png",
@@ -46,7 +46,7 @@
     },
     {
         "id": "ics-goat",
-        "description": "This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful. This is the Goat to teach you the learning that will be useful.",
+        "description": "ICSGoat is a vulnerable by design ICS infrastructure. ICSGoat mimics real-world infrastructure but with added vulnerabilities. It features simulations of multiple popularly used ICS protocols. ICSGoat is focused on a black box approach and will help understand the possible threats to critical ICS Infrastructure.",
         "card-title": "ICSGoat",
         "title": "ICSGoat : A Damn Vulnerable ICS Infrastructure",
         "image": "/goat-images/icsGoat.png",

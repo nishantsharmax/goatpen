@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-// import Link from "next/link";
 import { redirect } from "next/navigation";
 import LogInForm from "./loginForm";
 import { isLoggedIn } from "../utils/server-auth";
@@ -35,5 +34,3 @@ export default function Login() {
     </div>
   );
 }
-
-
