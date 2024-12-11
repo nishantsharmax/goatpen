@@ -345,7 +345,6 @@ main() {
 
                 cd /usr/src/app/modules
                 zip -r ${goat_bucket[$selected_index]}.zip ${goat_bucket[$selected_index]}
-                cd -
 
                 if [ -z "$GCLOUD_PROJECT" ]; then
                     echo "GCLOUD_PROJECT is not set"
@@ -359,6 +358,8 @@ main() {
                 fi
                 gcloud storage cp ${goat_bucket[$selected_index]}.zip gs://goat-pen-bucket-$GCLOUD_PROJECT/${goat_bucket[$selected_index]}.zip
                 rm ${goat_bucket[$selected_index]}.zip
+
+                cd -
             fi
             bucket_url=$(gsutil signurl $gcp_service_account_path gs://goat-pen-bucket-$GCLOUD_PROJECT/${goat_bucket[$selected_index]}.zip | awk 'NR==2{print $5}')
         fi

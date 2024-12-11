@@ -53,7 +53,7 @@ git clone https://github.com/nishantsharmax/goatpen
 **Step 2.** Update SubModules
 
 ```
-cd GoatPen
+cd goatpen
 cd modules && git submodule update --init --recursive
 ```
 
@@ -150,7 +150,7 @@ add screenshot for destroy module usage from cli
 
 # Modules
 
-GoatPen is designed to make it easy for contributors to keep on adding vulnerable applications/infrastructures that could be deeployed by without any dependency on the user's system. 
+GoatPen is designed to make it easy for contributors to keep on adding vulnerable applications/infrastructures that could be deployed by without any dependency on the user's system. 
 
 **How it works:**
 
@@ -163,7 +163,7 @@ Furthermore to add information about each web gui deployment it can be added to 
 
 # Contributors
 
-Rishappreet Sing Moonga, Software Engineer, INE  <rmoon@ine.com>
+Rishappreet Singh Moonga, Software Engineer, INE  <rmoon@ine.com>
 
 Shantanu Kale, Lab Infrastructure Team Lead, INE  <skale@ine.com>
 
